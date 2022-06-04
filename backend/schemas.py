@@ -2,11 +2,11 @@ import datetime as _dt
 
 import pydantic as _pydantic
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class _UserBase(BaseModel):
-    email: str
+    email: EmailStr
 
 
 class UserCreate(_UserBase):

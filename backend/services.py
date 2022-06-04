@@ -24,7 +24,7 @@ async def get_user_by_email(email: str, db: orm.Session):
 async def create_user(user: schemas.UserCreate, db: orm.Session):
     user_obj = models.User(
         email=user.email, 
-        hashed_password=hash.bcrypt(user.hashed_password))
+        hashed_password=hash.bcrypt.hash(user.hashed_password))
     db.add(user_obj)
     db.commit()
     db.refresh(user_obj)
