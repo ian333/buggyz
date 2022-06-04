@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 anyio==3.5.0
 asgiref==3.5.0
 click==8.1.2
@@ -13,14 +14,37 @@ anyio==3.5.0
 asgiref==3.5.0
 click==8.1.2
 fastapi==0.75.1
+=======
+anyio==3.6.1
+asgiref==3.5.2
+autopep8==1.6.0
+click==8.1.3
+dnspython==2.2.1
+email-validator==1.2.1
+fastapi==0.78.0
+>>>>>>> 27364dd6aa205039bf909cbcdb950e6e68a70835
 greenlet==1.1.2
 h11==0.13.0
 idna==3.3
 passlib==1.7.4
+<<<<<<< HEAD
 pydantic==1.9.0
 PyJWT==2.4.0
 sniffio==1.2.0
 SQLAlchemy==1.4.37
 starlette==0.17.1
 typing-extensions==4.1.1
+=======
+pycodestyle==2.8.0
+pydantic==1.9.0
+PyJWT==2.4.0
+python-decouple==3.6
+python-multipart==0.0.5
+six==1.16.0
+sniffio==1.2.0
+SQLAlchemy==1.4.36
+starlette==0.19.1
+toml==0.10.2
+typing-extensions==4.2.0
+>>>>>>> 27364dd6aa205039bf909cbcdb950e6e68a70835
 uvicorn==0.17.6
