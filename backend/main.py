@@ -20,7 +20,8 @@ async def create_user(
     Raises:
         fastapi.HTTPException: Raise an error if the user already exists!!
     Returns:
-        _type_: _description_
+        _type_: return the user object that was created 
+        
     """
     if db_user:
         raise fastapi.HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Email already in use")

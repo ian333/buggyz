@@ -22,6 +22,16 @@ async def get_user_by_email(email: str, db: orm.Session):
 
 
 async def create_user(user: schemas.UserCreate, db: orm.Session):
+    """_summary_
+
+    Args:
+        user (schemas.UserCreate): schema of userCreate hashed password
+        db (orm.Session): _description_
+
+    Returns:
+        _type_: return a user Object
+        
+    """
     user_obj = models.User(
         email=user.email, 
         hashed_password=hash.bcrypt.hash(user.hashed_password))
