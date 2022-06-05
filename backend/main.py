@@ -18,8 +18,7 @@ async def create_user(
     """_summary_
 
     Raises:
-        fastapi.HTTPException: _description_
-
+        fastapi.HTTPException: Raise an error if the user already exists!!
     Returns:
         _type_: _description_
     """
@@ -31,5 +30,6 @@ async def create_user(
 @app.get("/")
 def hello_world():
     return {"hello":"world"}
+
 
 
