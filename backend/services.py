@@ -1,3 +1,5 @@
+import fastapi
+from fastapi import security,status
 import database as _database
 import sqlalchemy.orm as orm
 import models
@@ -6,6 +8,7 @@ import passlib.hash as hash
 import jwt
 from decouple import config
 
+oauth2schema= security.OAuth2PasswordBearer(tokenUrl="/api/token")
 
 def create_database():
     return _database.Base.metadata.create_all(bind=_database.engine)
@@ -85,8 +88,27 @@ async def authenticate_user(email:str,password:str , db=orm.Session):
     return user
     
 async def create_token(user:models.User):
+    """This function creates a bearer token with a User model converted in a dict
+
+
+    Args:
+        user (models.User): A user model to covert into a dict
+
+    Returns:
+        dict: returns a dict with the bearer token created with the User 
+    """
     user_obj= schemas.User.from_orm(user)
     token = jwt.encode(user_obj.dict(),config("JWT_SECRET"))
 
     return dict(access_token=token,token_type="bearer")
+
+async def get_current_user(db:orm.Session=fastapi.Depends(get_db),token:str=fastapi.Depends(oauth2schema)):
+    try:
+        payload= jwt.decode(token,config("JWT_SECRET"),algorithms=["HS256"])
+        user= db.query(models.User).get(payload["id"])
+    except:
+        raise fastapi.HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid Email or password")
+
+    return schemas.User.from_orm(user)
+
     

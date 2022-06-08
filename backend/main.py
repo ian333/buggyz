@@ -4,8 +4,7 @@ from fastapi import FastAPI, security, status
 
 from sqlalchemy import orm
 
-import services
-import schemas
+import services,schemas
 
 app = FastAPI()
 
@@ -36,14 +35,29 @@ async def create_user(
 async def generate_token(form_data: security.OAuth2PasswordRequestForm =fastapi.Depends(),
                          db: orm.Session = fastapi.Depends(services.get_db),
                          ):
+    """_summary_
+
+    Args:
+        form_data (security.OAuth2PasswordRequestForm, optional): _description_. Defaults to fastapi.Depends().
+        db (orm.Session, optional): _description_. Defaults to fastapi.Depends(services.get_db).
+
+    Raises:
+        fastapi.HTTPException: _description_
+
+    Returns:
+        _type_: _description_
+    """
     user= await services.authenticate_user(form_data.username,form_data.password,db)
 
     if not user:
         raise fastapi.HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-        detail=f"invalid credentials{user}")
+        detail="invalid credentials")
     
     return await services.create_token(user)
 
+@app.get("/api/users/me",response_model = schemas.User)
+async def get_user(user:schemas.User=fastapi.Depends(services.get_current_user)):
+    return user
 
 @app.get("/")
 def hello_world():
