@@ -28,7 +28,9 @@ async def create_user(
         raise fastapi.HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Email already in use")
 
-    return await services.create_user(user, db)
+    await services.create_user(user, db)
+
+    return await services.create_token(user)
 
 
 @app.post("/api/token")
