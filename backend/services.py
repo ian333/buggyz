@@ -4,6 +4,7 @@ import models
 import schemas
 import passlib.hash as hash
 import jwt
+from decouple import config
 
 
 def create_database():
@@ -75,7 +76,7 @@ async def authenticate_user(email:str,password:str , db=orm.Session):
         return the User
         
     """
-    user = await get_user_by_email(email,db)
+    user = await get_user_by_email(email=email,db=db)
     if not user:
         return False
     if not user.verify_password(password):
@@ -85,5 +86,7 @@ async def authenticate_user(email:str,password:str , db=orm.Session):
     
 async def create_token(user:models.User):
     user_obj= schemas.User.from_orm(user)
-    token = jwt.encode
+    token = jwt.encode(user_obj.dict(),config("JWT_SECRET"))
+
+    return dict(access_token=token,token_type="bearer")
     
