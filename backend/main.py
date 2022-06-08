@@ -15,7 +15,8 @@ async def create_user(
         user: schemas.UserCreate,
         db: orm.Session = fastapi.Depends(services.get_db)):
     """Create user 
-    Parameters:  
+    Parameters:  user: schemas.UserCreate
+                db: the function get_db is call by Depends 
 
     Raises:
         fastapi.HTTPException: Raise an error if the user already exists!!
@@ -29,6 +30,9 @@ async def create_user(
 
     return await services.create_user(user,db)
 
+@app.post("/api/token")
+async def generate_token(form_data:security.OAuth2PasswordRequestForm= fastapi.Depends(),db:orm.Session=fastapi.Depends(services.get_db())):
+    pass
 @app.get("/")
 def hello_world():
     return {"hello":"world"}
