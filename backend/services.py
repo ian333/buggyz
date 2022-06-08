@@ -10,6 +10,12 @@ def create_database():
 
 
 def get_db():
+    """This function creates a class Session and it's used to make request to the DB
+    and get the data
+
+    Yields:
+        database: Return a local session of the DB to get the data
+    """
     db = _database.SessionLocal()
     try:
         yield db

@@ -14,15 +14,16 @@ app = FastAPI()
 async def create_user(
         user: schemas.UserCreate,
         db: orm.Session = fastapi.Depends(services.get_db)):
-    db_user= await services.get_user_by_email(user.email,db)
-    """_summary_
+    """Create user 
+    Parameters:  
 
     Raises:
         fastapi.HTTPException: Raise an error if the user already exists!!
     Returns:
         _type_: return the user object that was created 
-        
+            
     """
+    db_user= await services.get_user_by_email(user.email,db)
     if db_user:
         raise fastapi.HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Email already in use")
 
