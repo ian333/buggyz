@@ -1,7 +1,4 @@
 import datetime as _dt
-
-import pydantic as _pydantic
-
 from pydantic import BaseModel, EmailStr
 
 
@@ -30,9 +27,15 @@ class _LeadBase(BaseModel):
     company: str
     note: str
 
+class LeadCreate(_LeadBase):
+    pass
 
 class Lead(_LeadBase):
     id: int
     owner_id: int
     date_created: _dt.datetime
-    last_updated: _dt.datetime
+    date_last_updated: _dt.datetime
+    
+
+    class Config:
+        orm_mode = True
