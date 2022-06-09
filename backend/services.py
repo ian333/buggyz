@@ -1,5 +1,6 @@
+from pyexpat import model
 import fastapi
-from fastapi import security,status
+from fastapi import HTTPException, security, status
 import database as _database
 import sqlalchemy.orm as orm
 import models
@@ -8,7 +9,8 @@ import passlib.hash as hash
 import jwt
 from decouple import config
 
-oauth2schema= security.OAuth2PasswordBearer(tokenUrl="/api/token")
+oauth2schema = security.OAuth2PasswordBearer(tokenUrl="/api/token")
+
 
 def create_database():
     return _database.Base.metadata.create_all(bind=_database.engine)
@@ -37,7 +39,7 @@ async def get_user_by_email(email: str, db: orm.Session):
 
     Returns:
         User: return the user 
-        
+
     """
     return db.query(models.User).filter(models.User.email == email).first()
 
@@ -52,10 +54,10 @@ async def create_user(user: schemas.UserCreate, db: orm.Session):
 
     Returns:
         _type_: return a user Object
-        
+
     """
     user_obj = models.User(
-        email=user.email, 
+        email=user.email,
         hashed_password=hash.bcrypt.hash(user.hashed_password))
     db.add(user_obj)
     db.commit()
@@ -63,7 +65,7 @@ async def create_user(user: schemas.UserCreate, db: orm.Session):
     return user_obj
 
 
-async def authenticate_user(email:str,password:str , db=orm.Session):
+async def authenticate_user(email: str, password: str, db=orm.Session):
     """This function is to authenticate the user verify the password
 
     Args:
@@ -77,17 +79,18 @@ async def authenticate_user(email:str,password:str , db=orm.Session):
         return a boolean False
         if the user & the password match
         return the User
-        
+
     """
-    user = await get_user_by_email(email=email,db=db)
+    user = await get_user_by_email(email=email, db=db)
     if not user:
         return False
     if not user.verify_password(password):
         return False
-    
+
     return user
-    
-async def create_token(user:models.User):
+
+
+async def create_token(user: models.User):
     """This function creates a bearer token with a User model converted in a dict
 
 
@@ -97,18 +100,46 @@ async def create_token(user:models.User):
     Returns:
         dict: returns a dict with the bearer token created with the User 
     """
-    user_obj= schemas.User.from_orm(user)
-    token = jwt.encode(user_obj.dict(),config("JWT_SECRET"))
+    user_obj = schemas.User.from_orm(user)
+    token = jwt.encode(user_obj.dict(), config("JWT_SECRET"))
 
-    return dict(access_token=token,token_type="bearer")
+    return dict(access_token=token, token_type="bearer")
 
-async def get_current_user(db:orm.Session=fastapi.Depends(get_db),token:str=fastapi.Depends(oauth2schema)):
+
+async def get_current_user(db: orm.Session = fastapi.Depends(get_db), token: str = fastapi.Depends(oauth2schema)):
     try:
-        payload= jwt.decode(token,config("JWT_SECRET"),algorithms=["HS256"])
-        user= db.query(models.User).get(payload["id"])
+        payload = jwt.decode(token, config("JWT_SECRET"), algorithms=["HS256"])
+        user = db.query(models.User).get(payload["id"])
     except:
-        raise fastapi.HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid Email or password")
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid Email or password")
 
     return schemas.User.from_orm(user)
 
+
+async def create_lead(user: schemas.User, db: orm.Session, lead: schemas.LeadCreate):
+    lead = models.Lead(**lead.dict(), owner_id=user.id)
+    db.add(lead)
+    db.commit()
+    db.refresh(lead)
+    return schemas.Lead.from_orm(lead)
+
+
+async def get_leads(user: schemas.User, db: orm.Session):
+    leads = db.query(models.Lead).filter_by(owner_id=user.id)
+    return list(map(schemas.Lead.from_orm, leads))
+
+
+async def lead_selector(user: schemas.User, db: orm.Session, lead_id: int):
+    lead = db.query(models.Lead).filter_by(
+        owner_id=user.id).filter(models.Lead.id == lead_id).first()
     
+    if lead is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=" The lead Doesn't Exist")
+    return lead
+    
+
+async def get_lead(user: schemas.User, db: orm.Session, lead_id: int):
+    lead=await lead_selector(user=user,db=db,lead_id=lead_id)
+
+    return schemas.Lead.from_orm(lead)

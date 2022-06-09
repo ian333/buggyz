@@ -1,10 +1,12 @@
+from typing import List
 import fastapi
 from fastapi import FastAPI, security, status
 
 
 from sqlalchemy import orm
 
-import services,schemas
+import services
+import schemas
 
 app = FastAPI()
 
@@ -34,7 +36,7 @@ async def create_user(
 
 
 @app.post("/api/token")
-async def generate_token(form_data: security.OAuth2PasswordRequestForm =fastapi.Depends(),
+async def generate_token(form_data: security.OAuth2PasswordRequestForm = fastapi.Depends(),
                          db: orm.Session = fastapi.Depends(services.get_db),
                          ):
     """_summary_
@@ -49,17 +51,41 @@ async def generate_token(form_data: security.OAuth2PasswordRequestForm =fastapi.
     Returns:
         _type_: _description_
     """
-    user= await services.authenticate_user(form_data.username,form_data.password,db)
+    user = await services.authenticate_user(form_data.username, form_data.password, db)
 
     if not user:
         raise fastapi.HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="invalid credentials")
-    
+                                    detail="invalid credentials")
+
     return await services.create_token(user)
 
-@app.get("/api/users/me",response_model = schemas.User)
-async def get_user(user:schemas.User=fastapi.Depends(services.get_current_user)):
+
+@app.get("/api/users/me", response_model=schemas.User)
+async def get_user(user: schemas.User = fastapi.Depends(services.get_current_user)):
     return user
+
+
+@app.post("/api/leads", response_model=schemas.Lead)
+async def create_lead(lead: schemas.LeadCreate,
+                      user: schemas.User = fastapi.Depends(
+                          services.get_current_user),
+                      db: orm.Session = fastapi.Depends(services.get_db)):
+    return await services.create_lead(user=user,db=db,lead=lead)
+
+@app.get("/api/leads",response_model=List[schemas.Lead])
+async def get_leads(
+    user:schemas.User=fastapi.Depends(services.get_current_user),
+    db:orm.Session=fastapi.Depends(services.get_db)):
+    
+    return await services.get_leads(user=user,db=db)
+
+@app.get("/api/leads/{lead_id}",status_code=status.HTTP_200_OK,response_model=schemas.Lead)
+async def get_lead(
+    lead_id:int,
+    user:schemas.User=fastapi.Depends(services.get_current_user),
+    db:orm.Session=fastapi.Depends(services.get_db),
+    ):
+    return await services.get_lead(user=user,db=db,lead_id=lead_id)
 
 @app.get("/")
 def hello_world():
