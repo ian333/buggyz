@@ -70,22 +70,58 @@ async def create_lead(lead: schemas.LeadCreate,
                       user: schemas.User = fastapi.Depends(
                           services.get_current_user),
                       db: orm.Session = fastapi.Depends(services.get_db)):
-    return await services.create_lead(user=user,db=db,lead=lead)
+    return await services.create_lead(user=user, db=db, lead=lead)
 
-@app.get("/api/leads",response_model=List[schemas.Lead])
+
+@app.get("/api/leads", response_model=List[schemas.Lead])
 async def get_leads(
-    user:schemas.User=fastapi.Depends(services.get_current_user),
-    db:orm.Session=fastapi.Depends(services.get_db)):
-    
-    return await services.get_leads(user=user,db=db)
+        user: schemas.User = fastapi.Depends(services.get_current_user),
+        db: orm.Session = fastapi.Depends(services.get_db)):
 
-@app.get("/api/leads/{lead_id}",status_code=status.HTTP_200_OK,response_model=schemas.Lead)
+    return await services.get_leads(user=user, db=db)
+
+
+@app.get("/api/leads/{lead_id}", status_code=status.HTTP_200_OK, response_model=schemas.Lead)
 async def get_lead(
-    lead_id:int,
-    user:schemas.User=fastapi.Depends(services.get_current_user),
-    db:orm.Session=fastapi.Depends(services.get_db),
-    ):
-    return await services.get_lead(user=user,db=db,lead_id=lead_id)
+    lead_id: int,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    return await services.get_lead(user=user, db=db, lead_id=lead_id)
+
+
+@app.delete("/api/leads/{lead_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_lead(
+    lead_id: int,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db)
+):
+    """_summary_
+
+    Args:
+        lead_id (int): _description_
+        user (schemas.User, optional): _description_. Defaults to fastapi.Depends(services.get_current_user).
+        db (orm.Session, optional): _description_. Defaults to fastapi.Depends(services.get_db).
+
+    Returns:
+        _type_: _description_
+    """
+    await services.delete_lead(user=user, db=db, lead_id=lead_id)
+
+    
+
+
+@app.put("/api/leads/{lead_id}", status_code=status.HTTP_202_ACCEPTED)
+async def update_lead(
+    lead_id: int,
+    lead:schemas.LeadCreate,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    lead_updated =await services.update_lead(user=user, db=db, lead_id=lead_id,lead=lead)
+    
+    return{f"message","Succesfully updated {lead_updated}"}
+
 
 @app.get("/")
 def hello_world():
