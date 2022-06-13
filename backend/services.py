@@ -148,7 +148,7 @@ async def get_lead(user: schemas.User, db: orm.Session, lead_id: int):
 
 async def delete_lead(user: schemas.User, db: orm.Session, lead_id: int):
     lead = await lead_selector(user=user, db=db, lead_id=lead_id)
-    lead.delete()
+    db.delete(lead)
     db.commit()
 
 
