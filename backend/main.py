@@ -123,6 +123,6 @@ async def update_lead(
     return{f"message","Succesfully updated {lead_updated}"}
 
 
-@app.get("/")
-def hello_world():
+@app.get("/api")
+async def root():
     return {"hello": "world"}
