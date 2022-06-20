@@ -30,7 +30,7 @@ async def create_user(
         raise fastapi.HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Email already in use")
 
-    await services.create_user(user, db)
+    user=await services.create_user(user, db)
 
     return await services.create_token(user)
 
@@ -125,4 +125,4 @@ async def update_lead(
 
 @app.get("/api")
 async def root():
-    return {"hello": "world"}
+    return {"message": "Eres Increible tu primer Backend con React JS esta genial ooo se"}

@@ -1,4 +1,3 @@
-from pyexpat import model
 import fastapi
 from fastapi import HTTPException, security, status
 import database as _database
