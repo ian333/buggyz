@@ -12,6 +12,8 @@ passlib==1.7.4
 pydantic==1.9.0
 PyJWT==2.4.0
 python-decouple==3.6
+python-multipart==0.0.5
+six==1.16.0
 sniffio==1.2.0
 SQLAlchemy==1.4.37
 starlette==0.17.1
