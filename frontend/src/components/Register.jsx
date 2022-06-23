@@ -47,6 +47,7 @@ const Register = () => {
           <div className="control">
             <input
               type="email"
+              autoComplete="email"
               placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -61,6 +62,7 @@ const Register = () => {
             <input
               type="password"
               placeholder="Enter password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input"
@@ -74,6 +76,7 @@ const Register = () => {
             <input
               type="password"
               placeholder="Enter password"
+              autoComplete="new-password"
               value={confirmationPassword}
               onChange={(e) => setConfirmationPassword(e.target.value)}
               className="input"
