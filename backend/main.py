@@ -125,4 +125,4 @@ async def update_lead(
 
 @app.get("/api")
 async def root():
-    return {"message": "Eres Increible tu primer Backend con React JS esta genial ooo se"}
+    return {"message": "BUGGYZ"}
