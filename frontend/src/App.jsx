@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import { UserContext } from "./context/UserContext";
 import Header from "./components/Header";
 import Login from "./components/Login";
+import Table from "./components/Table"
 const App = () => {
   const [message, setMessage] = useState("");
   const[token,]= useContext(UserContext)
@@ -42,13 +43,10 @@ const App = () => {
               <Register/> <Login/>
             </div>
           ) :(
-            <p>You are In loocooo </p>
-          )
-
-        }
+            <Table />
+          )}
         </div>
         <div className="column"></div>
-
       </div>
     </>
   );
