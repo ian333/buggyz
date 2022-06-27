@@ -13,7 +13,6 @@ const App = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-
       },
     };
     const response = await fetch("/api", requestOptions);
